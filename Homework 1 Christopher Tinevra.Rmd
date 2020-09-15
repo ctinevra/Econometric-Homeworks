@@ -1,0 +1,131 @@
+---
+title: "Homework 1, Econ B2000"
+author: 'Christopher Tinevra, Group Members: Isabela Vieira, Akimawe Kadiri, Nicole
+  Kerrison, Mostafa Ragheb '
+date: "9/14/2020"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+### Question 3: "Simulating a Dice Roll"
+
+Theoretical probability of roll - the expectation is to roll a 6 on a dice of 6 sides for at least once 1/36= (.02778)
+
+In order to create a fair dice simulation in R. We first  begin by creating a variable called dice rolls and set the size to 2 representing the utilization of 2 dice and any time we roll we want replacements of numbers.
+
+```{r}
+die.rolls <- function (){
+  dice <- sample(x=1:6, size = 2, replace = TRUE)}
+
+```
+
+Then we want to create a simulation that runs this at least 20 times
+
+```{r}
+simtrial <- replicate(20,die.rolls())
+```
+
+Then create a table to of the simulation once its complete.
+
+```{r}
+table(simtrial)
+```
+
+#Then generate the frequency of the outcome and plot the data
+
+Frequency - this is the % of times we virtually rolled the numbers below
+
+```{r}
+table(simtrial)/length(simtrial)
+```
+
+Plot - This plots the number of times in the simulation roll that we record a number 
+
+```{r}
+plot(table(simtrial), xlab = 'Dice number', ylab = 'Frequency', main = '20 Rolls of 2 Fair Dice')
+```
+
+### Question 4: "Replication of Lecture 1 Rstudio notes"
+
+```{r}
+load("acs2017_ny_data.RData")
+acs2017_ny[1:10,1:7]
+attach(acs2017_ny)
+```
+```{r}
+summary(acs2017_ny)
+print(NN_obs <- length(AGE))
+```
+Sample size for this database equates to `r prettyNum(NN_obs, big.mark = ",")`
+
+```{r}
+summary(AGE[female == 1])
+summary(AGE[!female])
+```
+
+```{r}
+mean(AGE[female == 1])
+sd(AGE[female == 1])
+mean(AGE[!female])
+sd(AGE[!female])
+```
+
+Women in this dataset are, on average, a bit older, with an average age of `r round(mean(AGE[female == 1]), digits = 1)` compared with `r round(mean(AGE[female != 1]), digits = 1)` for men. 
+
+```{r}
+summary(EDUC[female == 1])
+summary(EDUC[!female])
+```
+
+```{r}
+mean(educ_college [female == 1])*100
+mean(educ_college [!female])*100
+
+```
+From the database, I found interesting that the education level between female and male seems to be equally distributed. For example: attendance for college education for women have an average percentage of `r mean((educ_college [female == 1])*100)`% in comparison to the average percentage of `r mean((educ_college [!female])*100)`% for men. Overall, it appears that the database shows that both gender dont have high attendance for college education.
+
+### Question 5: "S&P 500 Index"
+
+```{r}
+options(readr.num_columns = 0)
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Economics Master/Econometrics/HW_1_R_markdown_files")
+library(readr)
+S_P_Stock_Price <- read_csv("S&P 500 Index Price.csv")
+```
+
+Calculating the returns on the S&P with the data imported in R
+
+Table below illustrates the first values at the beginning of the month for the S&P 500
+
+```{r}
+head(S_P_Stock_Price)
+```
+
+Table below shows the adj close numbers of the S&P 500 Index
+
+```{r}
+S_P_Stock_Price[1:30, "Adj Close"]
+```
+
+We want to isolate the adj close values of the s&p in order to calculate returns by creating a new variable with just the adjusted close prices
+
+```{r}
+sp_pricedate <-S_P_Stock_Price[, "Date", drop = FALSE]
+sp_pricenew <-S_P_Stock_Price[, "Adj Close", drop = FALSE]
+cbind(sp_pricedate,sp_pricenew)
+```
+
+Calculating Adj Close Returns 
+
+```{r}
+n <-nrow(sp_pricenew)
+sp_returns <- log(sp_pricenew[2:n,1])-log(sp_pricenew[1:(n-1),1])
+returns <- sp_returns*100
+summary(returns)
+xdate <- sp_pricedate[2:21,"Date"]
+df1 <- cbind.data.frame(xdate,returns)
+#A new data frame will be created to reflect the Adj.Close Returns for S&P500 with each date
+print(df1)
+```
